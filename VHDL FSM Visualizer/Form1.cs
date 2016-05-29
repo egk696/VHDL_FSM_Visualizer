@@ -114,6 +114,7 @@ namespace VHDL_FSM_Visualizer
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.
             {
+                toolStripProgressBar1.Visible = true;
                 toolStripProgressBar1.Value = 0; //zero progress bar
                 Cursor.Current = Cursors.WaitCursor; //make wait cursor
                 vhdlFilePath = openFileDialog1.FileName;
@@ -139,8 +140,10 @@ namespace VHDL_FSM_Visualizer
                         refreshGraph();
                         Cursor.Current = Cursors.Default; // make default cursor
                         toolStripProgressBar1.Value = 100; //full progress bar
+                        toolStripProgressBar1.Visible = false;
                     } else
                     {
+                        
                         toolStripProgressBar1.Value = 0;
                     }
                 }
