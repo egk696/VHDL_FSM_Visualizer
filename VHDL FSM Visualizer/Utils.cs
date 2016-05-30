@@ -157,6 +157,27 @@ namespace VHDL_FSM_Visualizer
                     }
                 }
                 //TODO: Find transitions to next states foreach state in fsmStates
+                foreach(FSM_State state in fsmStates)
+                {
+                    int startIfLine = -1, endIfLine = -1;
+                    int ifsCount = 0;
+                    for(int i = state.whenStmentStartLine; i < state.whenStmentEndLine; i++)
+                    {
+                        string line = linesOfCode[i].Replace("\t", String.Empty).Replace("\n", String.Empty);
+                        if(ifsCount == 0 && line.IndexOf(fsmNextStateVar) != -1)
+                        {
+                            state.next_states.Add("no condition", GetStateForTransition(line, fsmStates, fsmNextStateVar));
+                        }
+                        if (IsIfStatement(line))
+                        {
+                            ifsCount++;
+                        }
+                        else if (IsEndIfStatement(line))
+                        {
+                            ifsCount--;
+                        }
+                    }
+                }
             }
             else
             {
@@ -164,6 +185,18 @@ namespace VHDL_FSM_Visualizer
             }
 
             return fsmStates;
+        }
+
+        public static FSM_State GetStateForTransition(string line, List<FSM_State> states, string fsmNextStateVar)
+        {
+            foreach (FSM_State state in states)
+            {
+                if (Regex.IsMatch(line, fsmNextStateVar+ @"(\s+|\t+)<=(\s+|\t+)?" + state.name, RegexOptions.IgnoreCase))
+                {
+                    return state;
+                }
+            }
+            return null;
         }
 
         public static FSM_State GetStateBelongsToWhen(string line, List<FSM_State> states)

@@ -89,7 +89,7 @@ namespace VHDL_FSM_Visualizer
                 for (int j=0;j < vlist.Count; j++)
                 {
                     FSM_State stateSrc = fsmStates[j];
-                    if (stateSrc.next_states.ContainsKey(stateDst.name))
+                    if (stateSrc.next_states.ContainsValue(stateDst))
                     {
                         var dataEdge = new DataEdge(vlist[j], vlist[i]) { Text = string.Format("{0} -> {1}", vlist[j], vlist[i]) };
                         dataGraph.AddEdge(dataEdge);
