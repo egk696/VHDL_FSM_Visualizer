@@ -100,7 +100,7 @@ namespace VHDL_FSM_Visualizer
             //Find the case statement corresponding to the FSM defined by fsmCurrStateVar
             for (int i = lineOfCloseEnum; i < linesOfCode.Length; i++)
             {
-                string line = linesOfCode[i].Replace("\t", String.Empty).Replace("\n", String.Empty);
+                string line = linesOfCode[i];
                 if(CaseForFSMExists(line, fsmCurrStateVar))
                 {
                     fsmCaseStartLine = i;
@@ -161,13 +161,26 @@ namespace VHDL_FSM_Visualizer
                     for (int i = state.whenStmentStartLine; i < state.whenStmentEndLine; i++)
                     {
                         string line = linesOfCode[i].Replace("\t", String.Empty).Replace("\n", String.Empty);
-                        if (ifsCount == 0 && line.IndexOf(fsmNextStateVar) != -1)
+                        if (ifsCount == 0 && line.IndexOf(fsmNextStateVar) != -1) //transition found outside of Condition
                         {
-                            state.next_states.Add("no condition", GetStateForTransition(line, fsmStates, fsmNextStateVar));
+                            state.next_states.Add(GetStateForTransition(line, fsmStates, fsmNextStateVar), "");
+                        }
+                        else if (i > startIfLine && line.IndexOf(fsmNextStateVar) != -1)
+                        {
+                            state.next_states.Add(GetStateForTransition(line, fsmStates, fsmNextStateVar), KeepOnlyConditionText(linesOfCode[startIfLine]));
                         }
                         if (IsIfStatement(line))
                         {
+                            startIfLine = i;
                             ifsCount++;
+                        }
+                        else if (IsElseIfStatement(line))
+                        {
+                            startIfLine = i;
+                        }
+                        else if (IsElseStatement(line))
+                        {
+                            startIfLine = i;
                         }
                         else if (IsEndIfStatement(line))
                         {
@@ -232,7 +245,7 @@ namespace VHDL_FSM_Visualizer
 
         public static bool IsElseStatement(string line)
         {
-            return Regex.IsMatch(line, @"else(\s+|\t+)([\s])", RegexOptions.IgnoreCase);
+            return Regex.IsMatch(line, @"else", RegexOptions.IgnoreCase);
         }
 
         public static bool IsEndIfStatement(string line)
@@ -258,6 +271,11 @@ namespace VHDL_FSM_Visualizer
         public static string RemoveSpecialCharacters(string str)
         {
             return Regex.Replace(str, "[^a-zA-Z0-9_.,]+", String.Empty, RegexOptions.Compiled);
+        }
+
+        public static string KeepOnlyConditionText(string str)
+        {
+            return Regex.Replace(str, @"(if|then|else|elsif|\t+|\s+)", String.Empty, RegexOptions.IgnoreCase);
         }
 
         public static string RemoveLeadingMultiTabs(string str)

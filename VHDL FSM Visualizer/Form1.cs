@@ -47,7 +47,7 @@ namespace VHDL_FSM_Visualizer
                 LogicCore = logic,
                 EdgeLabelFactory = new DefaultEdgelabelFactory()
             };
-            _gArea.ShowAllEdgesLabels(false);
+            _gArea.ShowAllEdgesLabels(true);
             logic.Graph = GenerateGraph();
             logic.DefaultLayoutAlgorithm = LayoutAlgorithmTypeEnum.LinLog;
             logic.DefaultLayoutAlgorithmParams = logic.AlgorithmFactory.CreateLayoutParameters(LayoutAlgorithmTypeEnum.LinLog);
@@ -56,7 +56,7 @@ namespace VHDL_FSM_Visualizer
             logic.DefaultOverlapRemovalAlgorithmParams = logic.AlgorithmFactory.CreateOverlapRemovalParameters(OverlapRemovalAlgorithmTypeEnum.FSA);
             ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).HorizontalGap = 50;
             ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).VerticalGap = 50;
-            logic.DefaultEdgeRoutingAlgorithm = EdgeRoutingAlgorithmTypeEnum.None;
+            logic.DefaultEdgeRoutingAlgorithm = EdgeRoutingAlgorithmTypeEnum.SimpleER;
             logic.AsyncAlgorithmCompute = false;
             _zoomctrl.Content = _gArea;
             _gArea.RelayoutFinished += gArea_RelayoutFinished;
@@ -89,68 +89,22 @@ namespace VHDL_FSM_Visualizer
                 for (int j=0;j < vlist.Count; j++)
                 {
                     FSM_State stateSrc = fsmStates[j];
-                    if (stateSrc.next_states.ContainsValue(stateDst))
+                    if (stateSrc.next_states.ContainsKey(stateDst))
                     {
-                        var dataEdge = new DataEdge(vlist[j], vlist[i]) { Text = string.Format("{0} -> {1}", vlist[j], vlist[i]) };
+                        var dataEdge = new DataEdge(vlist[j], vlist[i]) { Text =  stateSrc.next_states[stateDst]};
                         dataGraph.AddEdge(dataEdge);
                     }
                 }
             }
-            //Then create two edges optionaly defining Text property to show who are connected
-            //var dataEdge = new DataEdge(vlist[0], vlist[1]) { Text = string.Format("{0} -> {1}", vlist[0], vlist[1]) };
-            //dataGraph.AddEdge(dataEdge);
-            //dataEdge = new DataEdge(vlist[2], vlist[0]) { Text = string.Format("{0} -> {1}", vlist[2], vlist[0]) };
-            //dataGraph.AddEdge(dataEdge);
-
-
-            //dataEdge = new DataEdge(vlist[1], vlist[2]) { Text = string.Format("{0} -> {1}", vlist[2], vlist[1]) };
-            //dataGraph.AddEdge(dataEdge);
             return dataGraph;
         }
 
         private void loadFileBtn_Click(object sender, EventArgs e)
         {
-            int size = -1;
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.
             {
-                toolStripProgressBar1.Visible = true;
-                toolStripProgressBar1.Value = 0; //zero progress bar
-                Cursor.Current = Cursors.WaitCursor; //make wait cursor
-                vhdlFilePath = openFileDialog1.FileName;
-                fileSystemWatcher1.Filter = openFileDialog1.SafeFileName;
-                fileSystemWatcher1.Path = Path.GetDirectoryName(vhdlFilePath);
-                try
-                {
-                    toolStripProgressBar1.Value = 10;
-
-                    vhdlFileLinesOfCode = File.ReadAllLines(vhdlFilePath);
-
-                    toolStripProgressBar1.Value = 30;
-
-                    fsmStates = Utils.vhdlParseStatesDecleration(vhdlFileLinesOfCode, fsmTypeTxtBox.Text);
-                    fsmStates = Utils.vhdlParseStatesTransitions(fsmStates, vhdlFileLinesOfCode,  currStateTxtBox.Text, nextStateTxtBox.Text);
-
-                    if (fsmStates.Count > 0)
-                    {
-                        toolStripProgressBar1.Value = 70;
-
-                        wpfHost.Child = GenerateWpfVisuals();
-                        _zoomctrl.ZoomToFill();
-                        refreshGraph();
-                        Cursor.Current = Cursors.Default; // make default cursor
-                        toolStripProgressBar1.Value = 100; //full progress bar
-                        toolStripProgressBar1.Visible = false;
-                    } else
-                    {
-                        
-                        toolStripProgressBar1.Value = 0;
-                    }
-                }
-                catch (IOException)
-                {
-                    Console.WriteLine("Error while reading file");
-                }
+                LoadVHDLFile(openFileDialog1.FileName);
             }
         }
 
@@ -168,37 +122,67 @@ namespace VHDL_FSM_Visualizer
 
         private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
         {
-            toolStripProgressBar1.Value = 0;
-            toolStripProgressBar1.Value = 10;
+            LoadVHDLFile(vhdlFilePath);
+        }
 
-            bool fileRead = false;
-            while (!fileRead)
+        private bool LoadVHDLFile(string filePath)
+        {
+            if (filePath != vhdlFilePath)
             {
-                try {
-                    vhdlFileLinesOfCode = File.ReadAllLines(vhdlFilePath);
-                    fileRead = true;
-                }catch(Exception)
+                vhdlFilePath = filePath;
+            }
+            toolStripProgressBar1.Visible = true;
+            toolStripProgressBar1.Value = 0; //zero progress bar
+            Cursor.Current = Cursors.WaitCursor; //make wait cursor
+            fileSystemWatcher1.Filter = openFileDialog1.SafeFileName;
+            fileSystemWatcher1.Path = Path.GetDirectoryName(vhdlFilePath);
+            try
+            {
+                toolStripProgressBar1.Value = 10;
+                bool fileRead = false;
+                while (!fileRead)
                 {
-                    fileRead = false;
+                    try
+                    {
+                        vhdlFileLinesOfCode = File.ReadAllLines(vhdlFilePath);
+                        fileRead = true;
+                    }
+                    catch (Exception)
+                    {
+                        fileRead = false;
+                    }
+                }
+                if (fileRead)
+                {
+                    toolStripProgressBar1.Value = 30;
+                    fsmStates = Utils.vhdlParseStatesDecleration(vhdlFileLinesOfCode, fsmTypeTxtBox.Text);
+                    if (fsmStates.Count > 0)
+                    {
+                        fsmStates = Utils.vhdlParseStatesTransitions(fsmStates, vhdlFileLinesOfCode, currStateTxtBox.Text, nextStateTxtBox.Text);
+                        toolStripProgressBar1.Value = 70;
+                        wpfHost.Child = GenerateWpfVisuals();
+                        //_zoomctrl.ZoomToFill();
+                        refreshGraph();
+                        Cursor.Current = Cursors.Default; // make default cursor
+                        toolStripProgressBar1.Value = 100; //full progress bar
+                        toolStripProgressBar1.Visible = false;
+                        return true;
+                    }
+                    else
+                    {
+                        toolStripProgressBar1.Value = 0;
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
                 }
             }
-
-            if (fileRead)
+            catch (IOException)
             {
-                toolStripProgressBar1.Value = 30;
-
-                fsmStates = Utils.vhdlParseStatesDecleration(vhdlFileLinesOfCode, fsmTypeTxtBox.Text);
-
-                toolStripProgressBar1.Value = 60;
-
-                wpfHost.Child = GenerateWpfVisuals();
-                _zoomctrl.ZoomToFill();
-                
-                toolStripProgressBar1.Value = 100;
-
-                refreshGraph();
+                return false;
             }
-            
         }
     }
 }
