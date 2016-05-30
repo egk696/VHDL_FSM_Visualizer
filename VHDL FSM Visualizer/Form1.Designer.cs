@@ -114,7 +114,7 @@
             this.fsmTypeTxtBox.MaxLength = 512;
             this.fsmTypeTxtBox.Name = "fsmTypeTxtBox";
             this.fsmTypeTxtBox.Size = new System.Drawing.Size(156, 55);
-            this.fsmTypeTxtBox.Text = "fsm_state_type";
+            this.fsmTypeTxtBox.Text = "State_Type";
             // 
             // toolStripSeparator3
             // 

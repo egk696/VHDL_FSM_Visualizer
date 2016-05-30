@@ -64,9 +64,9 @@ namespace VHDL_FSM_Visualizer
                     }
                 }
                 //Clear the string
-                if (fsmDeclerationText.IndexOf("type") != -1)
+                if (fsmDeclerationText.IndexOf("type", StringComparison.CurrentCultureIgnoreCase) != -1)
                 {
-                    fsmDeclerationText = fsmDeclerationText.Remove(fsmDeclerationText.IndexOf("type"), indexOfOpenEnum - fsmDeclerationText.IndexOf("type"));
+                    fsmDeclerationText = fsmDeclerationText.Remove(fsmDeclerationText.IndexOf("type", StringComparison.CurrentCultureIgnoreCase), indexOfOpenEnum - fsmDeclerationText.IndexOf("type", StringComparison.CurrentCultureIgnoreCase));
                 }
                 else if (fsmDeclerationText.IndexOf("(") != -1)
                 {
@@ -105,7 +105,7 @@ namespace VHDL_FSM_Visualizer
                 {
                     fsmCaseStartLine = i;
                 }
-                else if (line.Contains("end case;") && fsmCaseStartLine != -1)
+                else if (EndCaseForFSMExists(line) && fsmCaseStartLine != -1)
                 {
                     fsmCaseEndLine = i;
                     break;
@@ -170,12 +170,19 @@ namespace VHDL_FSM_Visualizer
         {
             foreach (FSM_State state in states)
             {
-                if (Regex.IsMatch(line, @"(\t?\s?when\s+)(" + state.name + @")\s?=>", RegexOptions.Compiled))
+                if (Regex.IsMatch(line, @"when(\s+|\t+)" + state.name + @"(\s+|\t+)?=>", RegexOptions.IgnoreCase))
                 {
                     return state;
                 }
             }
-            return null;
+            if (Regex.IsMatch(line, @"when(\s+|\t+)(.+?)=>", RegexOptions.IgnoreCase)) //capture an unknown state i.e.: WHEN others =>
+            {
+                return new FSM_State(-1, "");
+            }
+            else //nothing found
+            {
+                return null;
+            }
         }
 
         public static bool IsNextStateAssign(string line, string fsmNextStateVar)
@@ -185,32 +192,32 @@ namespace VHDL_FSM_Visualizer
 
         public static bool IsIfStatement(string line)
         {
-            return Regex.IsMatch(line, @"if(\s+|\t+)(.*?)then", RegexOptions.Compiled);
+            return Regex.IsMatch(line, @"if(\s+|\t+)(.*?)then", RegexOptions.IgnoreCase);
         }
 
         public static bool IsElseIfStatement(string line)
         {
-            return Regex.IsMatch(line, @"elsif(\s+|\t+)(.*?)then", RegexOptions.Compiled);
+            return Regex.IsMatch(line, @"elsif(\s+|\t+)(.*?)then", RegexOptions.IgnoreCase);
         }
 
         public static bool IsElseStatement(string line)
         {
-            return Regex.IsMatch(line, @"else(\s+|\t+)([\s])", RegexOptions.Compiled);
+            return Regex.IsMatch(line, @"else(\s+|\t+)([\s])", RegexOptions.IgnoreCase);
         }
 
         public static bool IsEndIfStatement(string line)
         {
-            return Regex.IsMatch(line, @"end(\s+|\t+)if;", RegexOptions.Compiled);
+            return Regex.IsMatch(line, @"end(\s+|\t+)if;", RegexOptions.IgnoreCase);
         }
 
         public static bool CaseForFSMExists(string line, string fsmCurrStateVar)
         {
-            return Regex.IsMatch(line, @"(\t?\s?case\s+)(" + fsmCurrStateVar + @")\s+is", RegexOptions.Compiled);
+            return Regex.IsMatch(line, @"case(\s+|\t+)" + fsmCurrStateVar + @"(\s+|\t+)is", RegexOptions.IgnoreCase);
         }
 
         public static bool EndCaseForFSMExists(string line)
         {
-            return Regex.IsMatch(line, @"end(\s+|\t+)case;");
+            return Regex.IsMatch(line, @"end(\s+|\t+)case;", RegexOptions.IgnoreCase);
         }
 
         public static string RemoveNonCodeCharacters(string str)

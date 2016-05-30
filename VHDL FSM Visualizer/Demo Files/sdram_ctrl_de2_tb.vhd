@@ -1,20 +1,3 @@
-----------------------------------------------------------------------------------
--- Company: KTH Department of Electronics
--- Engineer: Lefteris Kyriakakis
--- 
--- Create Date: 01/22/2016 08:26:19 PM
--- Design Name: SDRAM SDR Controller
--- Module Name: sdram_ctrl_de2_tb - Behavioral
--- Project Name: SUED
--- Target Devices:
--- 	Boards: Artix-7, DE2-115
---		Memories: IS42/45R86400D/16320D/32160D, IS42/45S86400D/16320D/32160D, IS42/45SM/RM/VM16160K 
--- Comments:
--- 	Currently supports only single r/w accesses, no burst mode has been implemented.
---		Recommended frequency of r/w requests is REQUEST_DELAY_CYCLES=20
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;

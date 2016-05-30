@@ -111,7 +111,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Demo Files\sdram_ctrl_de2_tb.vhd" />
-    <None Include="Demo Files\sdram_ctrl_tmr.vhd" />
+    <None Include="Demo Files\video_composer_fsmd.vhd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
