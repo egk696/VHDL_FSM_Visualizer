@@ -3,12 +3,43 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="http://schemas.panthernet.ru/graphx/">
 
+    <LinearGradientBrush x:Key="NormalBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FFFFFFFF" Offset="0"/>
+        <GradientStop Color="#FFA4ADBB" Offset="0.521"/>
+        <GradientStop Color="#FFD7E0EA" Offset="0.194"/>
+        <GradientStop Color="#FFBAC1CF" Offset="0.811"/>
+        <GradientStop Color="#FFBCC5D5" Offset="0.507"/>
+        <GradientStop Color="#FFE3E4E6" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="NormalBorderBrush" EndPoint="0.5,0" StartPoint="0.5,1">
+        <GradientStop Color="#FF8B8B8B"/>
+        <GradientStop Color="#FFADADAD" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="NormalHighlightBrush" Color="#FFFFFFFF"/>
+    <LinearGradientBrush x:Key="MouseOverBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FFFFFFFF" Offset="0" />
+        <GradientStop Color="#FFFEF3B5" Offset="0.318" />
+        <GradientStop Color="#FFFFEB70" Offset="0.488" />
+        <GradientStop Color="#FFFFD02E" Offset="0.502" />
+        <GradientStop Color="#FFFFD932" Offset="0.834" />
+        <GradientStop Color="#FFFFF48B" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="MouseOverBorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FFEEE8CF" Offset="0" />
+        <GradientStop Color="#FFC4AF8C" Offset="0.536" />
+        <GradientStop Color="#FFDCD1BF" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="MouseOverHighlightBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FFFFFFFB" Offset="0" />
+        <GradientStop Color="#FFFEF3B5" Offset="1" />
+    </LinearGradientBrush>
+
     <!-- VERTEX CONTROL -->
     <Style TargetType="{x:Type controls:VertexControl}">
-        <Setter Property="Background" Value="#FFE3E3E3"/>
-        <Setter Property="BorderThickness" Value="5,3,5,3"/>
+        <Setter Property="Background" Value="{StaticResource NormalBrush}"/>
         <Setter Property="Padding" Value="10,5,10,5"/>
-        <Setter Property="BorderBrush" Value="#FF393939"/>
+        <Setter Property="BorderBrush" Value="{StaticResource NormalBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="3"/>
 
         <Setter Property="Template">
             <Setter.Value>
@@ -33,9 +64,25 @@
         <Setter Property="controls:DragBehaviour.IsDragEnabled"
                 Value="True" />
 
-        <Setter Property="controls:HighlightBehaviour.IsHighlightEnabled" Value="False"/>
+        <Setter Property="controls:HighlightBehaviour.IsHighlightEnabled" Value="True"/>
 
+        <Setter Property="ToolTipService.ShowDuration" 
+            Value="60000"/>
         
+        <Setter Property="ToolTip">
+            <Setter.Value>
+                <Border BorderBrush="Black" BorderThickness="2" CornerRadius="8" Background="{StaticResource NormalBrush}" UseLayoutRounding="True">
+                    <StackPanel Orientation="Vertical" Width="Auto">
+                        <TextBlock Text="State Executed Code" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Bold"/>
+                        <StackPanel Orientation="Horizontal" Width="Auto" Background="White">
+                            <TextBlock TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" Width="Auto" Text="{Binding Desc}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Setter.Value>
+        </Setter>
+
+
         <Style.Triggers>
             <Trigger Property="controls:HighlightBehaviour.Highlighted" Value="True">
                 <Setter Property="Background" Value="Gold"/>
@@ -43,6 +90,8 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    
 
     <!-- EDGE CONTROL -->
     <Style TargetType="{x:Type controls:EdgeControl}">

@@ -16,6 +16,7 @@ namespace VHDL_FSM_Visualizer
         /// Some string property for example purposes
         /// </summary>
         public string Text { get; set; }
+        public string Desc { get; set; }
 
         #region Calculated or static props
 
@@ -38,6 +39,13 @@ namespace VHDL_FSM_Visualizer
         public DataVertex(string text = "")
         {
             Text = text;
+            Desc = "";
+        }
+
+        public DataVertex(string text = "", string desc = "")
+        {
+            Text = text;
+            Desc = desc;
         }
     }
 }

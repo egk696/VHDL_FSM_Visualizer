@@ -145,12 +145,15 @@ namespace VHDL_FSM_Visualizer
                 for (int ii = 0; ii < fsmStates.Count; ii++)
                 {
                     FSM_State state = fsmStates[ii];
+                    StringBuilder sb = new StringBuilder();
                     if (state.whenStmentStartLine != -1 && state.whenStmentEndLine != -1)
                     {
                         for (int i = state.whenStmentStartLine; i < state.whenStmentEndLine; i++)
                         {
-                            state.whenStmentTxt += linesOfCode[i];
+                            string line = RemoveLeadingMultiTabs(linesOfCode[i]);
+                            sb.AppendLine(line);
                         }
+                        state.whenStmentTxt = sb.ToString();
                     }
                 }
                 //TODO: Find transitions to next states foreach state in fsmStates
@@ -212,12 +215,17 @@ namespace VHDL_FSM_Visualizer
 
         public static string RemoveNonCodeCharacters(string str)
         {
-            return Regex.Replace(str, @"[^a-zA-Z0-9_.,;\(\)\{\}]+", "", RegexOptions.Compiled);
+            return Regex.Replace(str, @"[^a-zA-Z0-9_.,;\(\)\{\}]+", String.Empty, RegexOptions.Compiled);
         }
 
         public static string RemoveSpecialCharacters(string str)
         {
-            return Regex.Replace(str, "[^a-zA-Z0-9_.,]+", "", RegexOptions.Compiled);
+            return Regex.Replace(str, "[^a-zA-Z0-9_.,]+", String.Empty, RegexOptions.Compiled);
+        }
+
+        public static string RemoveLeadingMultiTabs(string str)
+        {
+            return Regex.Replace(str, @"^([\t]\t)", String.Empty, RegexOptions.Compiled);
         }
     }
 }

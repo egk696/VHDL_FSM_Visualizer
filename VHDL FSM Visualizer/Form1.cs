@@ -79,7 +79,7 @@ namespace VHDL_FSM_Visualizer
             var dataGraph = new FSMGraph();
             foreach(FSM_State state in fsmStates)
             {
-                var dataVertex = new DataVertex(state.name);
+                var dataVertex = new DataVertex(state.name, state.whenStmentTxt);
                 dataGraph.AddVertex(dataVertex);
             }
             var vlist = dataGraph.Vertices.ToList();
