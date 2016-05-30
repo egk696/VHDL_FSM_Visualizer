@@ -118,11 +118,8 @@ namespace VHDL_FSM_Visualizer
                 {
                     caseStatementStr += linesOfCode[i];
                 }
-            }
-            //Find the starting & ending lines numbers of each WHEN text foreach STATE in fsmStates
-            FSM_State tempState = null, prevState = null;
-            if (fsmCaseStartLine != -1 && fsmCaseEndLine != -1)
-            {
+                //Find the starting & ending lines numbers of each WHEN text foreach STATE in fsmStates
+                FSM_State tempState = null, prevState = null;
                 for (int i = fsmCaseStartLine; i <= fsmCaseEndLine; i++)
                 {
                     string line = linesOfCode[i].Replace("\t", String.Empty).Replace("\n", String.Empty);
@@ -157,14 +154,14 @@ namespace VHDL_FSM_Visualizer
                     }
                 }
                 //TODO: Find transitions to next states foreach state in fsmStates
-                foreach(FSM_State state in fsmStates)
+                foreach (FSM_State state in fsmStates)
                 {
                     int startIfLine = -1, endIfLine = -1;
                     int ifsCount = 0;
-                    for(int i = state.whenStmentStartLine; i < state.whenStmentEndLine; i++)
+                    for (int i = state.whenStmentStartLine; i < state.whenStmentEndLine; i++)
                     {
                         string line = linesOfCode[i].Replace("\t", String.Empty).Replace("\n", String.Empty);
-                        if(ifsCount == 0 && line.IndexOf(fsmNextStateVar) != -1)
+                        if (ifsCount == 0 && line.IndexOf(fsmNextStateVar) != -1)
                         {
                             state.next_states.Add("no condition", GetStateForTransition(line, fsmStates, fsmNextStateVar));
                         }
@@ -191,7 +188,7 @@ namespace VHDL_FSM_Visualizer
         {
             foreach (FSM_State state in states)
             {
-                if (Regex.IsMatch(line, fsmNextStateVar+ @"(\s+|\t+)<=(\s+|\t+)?" + state.name, RegexOptions.IgnoreCase))
+                if (Regex.IsMatch(line, fsmNextStateVar+ @"(\s+|\t+)?<=(\s+|\t+)?" + state.name, RegexOptions.IgnoreCase))
                 {
                     return state;
                 }
