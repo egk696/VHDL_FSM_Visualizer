@@ -27,16 +27,23 @@ namespace VHDL_FSM_Visualizer
         public Form1()
         {
             InitializeComponent();
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             wpfHost.Child = GenerateWpfVisuals();
             _zoomctrl.ZoomToFill();
+            this.Activated += AfterLoading;
+        }
+        private void AfterLoading(object sender, EventArgs e)
+        {
+            Utils.WriteLogFile(Utils.logType.Info, "Welcome to VHDL FSM Visualizer");
         }
 
         private UIElement GenerateWpfVisuals()
         {
+
             _zoomctrl = new ZoomControl();
             ZoomControl.SetViewFinderVisibility(_zoomctrl, Visibility.Visible);
             /* ENABLES WINFORMS HOSTING MODE --- >*/
@@ -71,6 +78,7 @@ namespace VHDL_FSM_Visualizer
         void gArea_RelayoutFinished(object sender, EventArgs e)
         {
             _zoomctrl.ZoomToFill();
+
         }
 
         private FSMGraph GenerateGraph()
@@ -110,10 +118,13 @@ namespace VHDL_FSM_Visualizer
 
         private void loadFileBtn_Click(object sender, EventArgs e)
         {
+            
             int size = -1;
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
+            Utils.WriteLogFile(Utils.logType.Info, "Loading File: ",openFileDialog1.FileName);
             if (result == DialogResult.OK) // Test result.
             {
+                
                 toolStripProgressBar1.Visible = true;
                 toolStripProgressBar1.Value = 0; //zero progress bar
                 Cursor.Current = Cursors.WaitCursor; //make wait cursor
@@ -122,6 +133,7 @@ namespace VHDL_FSM_Visualizer
                 fileSystemWatcher1.Path = Path.GetDirectoryName(vhdlFilePath);
                 try
                 {
+                  
                     toolStripProgressBar1.Value = 10;
 
                     vhdlFileLinesOfCode = File.ReadAllLines(vhdlFilePath);
@@ -140,15 +152,19 @@ namespace VHDL_FSM_Visualizer
                         refreshGraph();
                         Cursor.Current = Cursors.Default; // make default cursor
                         toolStripProgressBar1.Value = 100; //full progress bar
+                        Utils.WriteLogFile(Utils.logType.Info, openFileDialog1.FileName+ " Loaded successfully " );
+
                         toolStripProgressBar1.Visible = false;
+                      
                     } else
                     {
                         
                         toolStripProgressBar1.Value = 0;
                     }
                 }
-                catch (IOException)
+                catch (IOException ex)
                 {
+                    Utils.WriteLogFile(Utils.logType.Error, "Error while reading file", ex.StackTrace);
                     Console.WriteLine("Error while reading file");
                 }
             }
@@ -168,6 +184,7 @@ namespace VHDL_FSM_Visualizer
 
         private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
         {
+            
             toolStripProgressBar1.Value = 0;
             toolStripProgressBar1.Value = 10;
 
@@ -185,6 +202,7 @@ namespace VHDL_FSM_Visualizer
 
             if (fileRead)
             {
+                
                 toolStripProgressBar1.Value = 30;
 
                 fsmStates = Utils.vhdlParseStatesDecleration(vhdlFileLinesOfCode, fsmTypeTxtBox.Text);
