@@ -49,13 +49,13 @@ namespace VHDL_FSM_Visualizer
             };
             _gArea.ShowAllEdgesLabels(true);
             logic.Graph = GenerateGraph();
-            logic.DefaultLayoutAlgorithm = LayoutAlgorithmTypeEnum.LinLog;
-            logic.DefaultLayoutAlgorithmParams = logic.AlgorithmFactory.CreateLayoutParameters(LayoutAlgorithmTypeEnum.LinLog);
+            logic.DefaultLayoutAlgorithm = LayoutAlgorithmTypeEnum.FR;
+            logic.DefaultLayoutAlgorithmParams = logic.AlgorithmFactory.CreateLayoutParameters(LayoutAlgorithmTypeEnum.FR);
             //((LinLogLayoutParameters)logic.DefaultLayoutAlgorithmParams). = 100;
             logic.DefaultOverlapRemovalAlgorithm = OverlapRemovalAlgorithmTypeEnum.FSA;
             logic.DefaultOverlapRemovalAlgorithmParams = logic.AlgorithmFactory.CreateOverlapRemovalParameters(OverlapRemovalAlgorithmTypeEnum.FSA);
-            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).HorizontalGap = 50;
-            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).VerticalGap = 50;
+            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).HorizontalGap = 100;
+            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).VerticalGap = 100;
             logic.DefaultEdgeRoutingAlgorithm = EdgeRoutingAlgorithmTypeEnum.SimpleER;
             logic.AsyncAlgorithmCompute = false;
             _zoomctrl.Content = _gArea;
@@ -104,28 +104,31 @@ namespace VHDL_FSM_Visualizer
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.
             {
-                LoadVHDLFile(openFileDialog1.FileName);
+                LoadVHDLFile(openFileDialog1.FileName, true);
             }
         }
 
-        private void refreshGraph()
+        private void refreshGraph(bool relayout)
         {
             _gArea.GenerateGraph(true);
             _gArea.SetVerticesDrag(true, true);
-            _zoomctrl.ZoomToFill();
+            if (relayout)
+            {
+                _zoomctrl.ZoomToFill();
+            }
         }
 
         private void refreshGraphBtn_Click(object sender, EventArgs e)
         {
-            refreshGraph();
+            refreshGraph(true);
         }
 
         private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
         {
-            LoadVHDLFile(vhdlFilePath);
+            LoadVHDLFile(vhdlFilePath, true);
         }
 
-        private bool LoadVHDLFile(string filePath)
+        private bool LoadVHDLFile(string filePath, bool relayout)
         {
             if (filePath != vhdlFilePath)
             {
@@ -161,8 +164,7 @@ namespace VHDL_FSM_Visualizer
                         fsmStates = Utils.vhdlParseStatesTransitions(fsmStates, vhdlFileLinesOfCode, currStateTxtBox.Text, nextStateTxtBox.Text);
                         toolStripProgressBar1.Value = 70;
                         wpfHost.Child = GenerateWpfVisuals();
-                        //_zoomctrl.ZoomToFill();
-                        refreshGraph();
+                        refreshGraph(relayout);
                         Cursor.Current = Cursors.Default; // make default cursor
                         toolStripProgressBar1.Value = 100; //full progress bar
                         toolStripProgressBar1.Visible = false;
