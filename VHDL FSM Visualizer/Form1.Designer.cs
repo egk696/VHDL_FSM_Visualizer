@@ -48,6 +48,8 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.wpfHost = new System.Windows.Forms.Integration.ElementHost();
             this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
+            this.LogOutput = new System.Windows.Forms.ListBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
@@ -71,7 +73,7 @@
             this.nextStateTxtBox});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1166, 55);
+            this.toolStrip1.Size = new System.Drawing.Size(1361, 55);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -105,7 +107,7 @@
             this.toolStripLabel3.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.toolStripLabel3.Name = "toolStripLabel3";
             this.toolStripLabel3.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.toolStripLabel3.Size = new System.Drawing.Size(126, 52);
+            this.toolStripLabel3.Size = new System.Drawing.Size(127, 52);
             this.toolStripLabel3.Text = "FSM Type Name:";
             // 
             // fsmTypeTxtBox
@@ -125,7 +127,7 @@
             // 
             this.toolStripLabel1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(210, 52);
+            this.toolStripLabel1.Size = new System.Drawing.Size(212, 52);
             this.toolStripLabel1.Text = "Current State Variable Name:";
             // 
             // currStateTxtBox
@@ -145,7 +147,7 @@
             // 
             this.toolStripLabel2.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(189, 52);
+            this.toolStripLabel2.Size = new System.Drawing.Size(191, 52);
             this.toolStripLabel2.Text = "Next State Variable Name:";
             // 
             // nextStateTxtBox
@@ -161,9 +163,9 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
             this.toolStripProgressBar1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 589);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 767);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1166, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1361, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -190,7 +192,7 @@
             this.wpfHost.BackColor = System.Drawing.Color.White;
             this.wpfHost.Location = new System.Drawing.Point(0, 58);
             this.wpfHost.Name = "wpfHost";
-            this.wpfHost.Size = new System.Drawing.Size(1166, 528);
+            this.wpfHost.Size = new System.Drawing.Size(1361, 496);
             this.wpfHost.TabIndex = 3;
             this.wpfHost.Text = "elementHost1";
             this.wpfHost.Child = null;
@@ -202,11 +204,37 @@
             this.fileSystemWatcher1.SynchronizingObject = this;
             this.fileSystemWatcher1.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher1_Changed);
             // 
+            // LogOutput
+            // 
+            this.LogOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LogOutput.FormattingEnabled = true;
+            this.LogOutput.Location = new System.Drawing.Point(0, 578);
+            this.LogOutput.MaximumSize = new System.Drawing.Size(1361, 186);
+            this.LogOutput.Name = "LogOutput";
+            this.LogOutput.Size = new System.Drawing.Size(1361, 186);
+            this.LogOutput.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
+            this.label1.ForeColor = System.Drawing.Color.DimGray;
+            this.label1.Location = new System.Drawing.Point(-3, 556);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(82, 22);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Output: ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1166, 611);
+            this.ClientSize = new System.Drawing.Size(1361, 789);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.LogOutput);
             this.Controls.Add(this.wpfHost);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
@@ -246,6 +274,8 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Integration.ElementHost wpfHost;
         private System.IO.FileSystemWatcher fileSystemWatcher1;
+        private System.Windows.Forms.Label label1;
+        public System.Windows.Forms.ListBox LogOutput;
     }
 }
 

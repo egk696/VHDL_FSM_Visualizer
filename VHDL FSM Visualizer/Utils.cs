@@ -10,6 +10,7 @@ namespace VHDL_FSM_Visualizer
 {
     class Utils
     {
+        public enum logType {Info,Error,Debug};
         static int fsmDeclarationLine = -1;
         static int lineOfOpenEnum = -1, indexOfOpenEnum = -1, lineOfCloseEnum = -1, indexOfCloseEnum = -1;
         static string fsmDeclerationText = "";
@@ -281,6 +282,15 @@ namespace VHDL_FSM_Visualizer
         public static string RemoveLeadingMultiTabs(string str)
         {
             return Regex.Replace(str, @"^([\t]\t)", String.Empty, RegexOptions.Compiled);
+        }
+
+        public static void WriteLogFile(logType type, string message, string extras = "")
+        {
+            Form1 form = Form.ActiveForm as Form1;
+            if (form != null)
+            {
+                form.LogOutput.Items.Add(DateTime.Now.ToString("HH:mm:ss") + ": ----"+type.ToString()+":  "+message+"  "+extras );
+            }
         }
     }
 }

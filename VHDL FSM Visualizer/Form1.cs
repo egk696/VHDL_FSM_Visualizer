@@ -27,16 +27,24 @@ namespace VHDL_FSM_Visualizer
         public Form1()
         {
             InitializeComponent();
+            this.Shown += new System.EventHandler(this.Form1_Shown);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             wpfHost.Child = GenerateWpfVisuals();
             _zoomctrl.ZoomToFill();
+
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            Utils.WriteLogFile(Utils.logType.Info, "Welcome to VHDL FSM Visualizer");
         }
 
         private UIElement GenerateWpfVisuals()
         {
+
             _zoomctrl = new ZoomControl();
             ZoomControl.SetViewFinderVisibility(_zoomctrl, Visibility.Visible);
             /* ENABLES WINFORMS HOSTING MODE --- >*/
@@ -71,13 +79,14 @@ namespace VHDL_FSM_Visualizer
         void gArea_RelayoutFinished(object sender, EventArgs e)
         {
             _zoomctrl.ZoomToFill();
+
         }
 
         private FSMGraph GenerateGraph()
         {
             //FOR DETAILED EXPLANATION please see SimpleGraph example project
             var dataGraph = new FSMGraph();
-            foreach(FSM_State state in fsmStates)
+            foreach (FSM_State state in fsmStates)
             {
                 var dataVertex = new DataVertex(state.name, state.whenStmentTxt);
                 dataGraph.AddVertex(dataVertex);
@@ -86,12 +95,12 @@ namespace VHDL_FSM_Visualizer
             for (int i = 0; i < vlist.Count; i++)
             {
                 FSM_State stateDst = fsmStates[i];
-                for (int j=0;j < vlist.Count; j++)
+                for (int j = 0; j < vlist.Count; j++)
                 {
                     FSM_State stateSrc = fsmStates[j];
                     if (stateSrc.next_states.ContainsKey(stateDst))
                     {
-                        var dataEdge = new DataEdge(vlist[j], vlist[i]) { Text =  stateSrc.next_states[stateDst]};
+                        var dataEdge = new DataEdge(vlist[j], vlist[i]) { Text = stateSrc.next_states[stateDst] };
                         dataGraph.AddEdge(dataEdge);
                     }
                 }
@@ -102,6 +111,7 @@ namespace VHDL_FSM_Visualizer
         private void loadFileBtn_Click(object sender, EventArgs e)
         {
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
+            Utils.WriteLogFile(Utils.logType.Info, "Loading File: ", openFileDialog1.FileName);
             if (result == DialogResult.OK) // Test result.
             {
                 LoadVHDLFile(openFileDialog1.FileName, true);
@@ -114,14 +124,15 @@ namespace VHDL_FSM_Visualizer
             _gArea.SetVerticesDrag(true, true);
             if (relayout)
             {
-                _zoomctrl.ZoomToFill();
-            }
+            _zoomctrl.ZoomToFill();
+        }
         }
 
         private void refreshGraphBtn_Click(object sender, EventArgs e)
         {
             refreshGraph(true);
         }
+
 
         private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
         {
