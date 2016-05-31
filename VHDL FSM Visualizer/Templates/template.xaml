@@ -122,8 +122,20 @@
         <Setter Property="Opacity"
                 Value="1" />
 
-        <Setter Property="controls:HighlightBehaviour.IsHighlightEnabled" Value="False"/>
+        <Setter Property="controls:HighlightBehaviour.IsHighlightEnabled" Value="True"/>
 
+        <Setter Property="ToolTipService.ShowDuration" 
+            Value="60000"/>
+
+        <Setter Property="ToolTip">
+            <Setter.Value>
+                <Border BorderBrush="Black" BorderThickness="2" CornerRadius="8" Background="{StaticResource NormalBrush}" UseLayoutRounding="True">
+                    <StackPanel Orientation="Vertical" Width="Auto">
+                        <TextBlock Text="{Binding Condition}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Bold"/>
+                    </StackPanel>
+                </Border>
+            </Setter.Value>
+        </Setter>
 
         <Style.Triggers>
             <Trigger Property="controls:HighlightBehaviour.Highlighted" Value="True">

@@ -82,15 +82,10 @@ namespace VHDL_FSM_Visualizer
                 {
                     fsmStates.Add(new FSM_State (i, statesText[i]));
                 }
-                //If no states are found
-                if (!fsmTypeFound || lineOfOpenEnum == -1 || lineOfCloseEnum == -1 || indexOfOpenEnum == -1 || indexOfCloseEnum == -1)
-                {
-                    MessageBox.Show("No FSM type enum found in the file selected.", "VHDL FSM Decleration Not Found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                MessageBox.Show("The FSM type enum could not be parsed.\nException: " + e.Message + "\nData: " + e.Data, "VHDL FSM Decleration Not Recognized", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                Utils.WriteLogFile(Utils.logType.Error, "Exception occured with message: " + ex.Message, "Data: \n" + ex.Data);
             }
 
             return fsmStates;
@@ -152,6 +147,10 @@ namespace VHDL_FSM_Visualizer
                             sb.AppendLine(line);
                         }
                         state.whenStmentTxt = sb.ToString();
+                        Utils.WriteLogFile(Utils.logType.Debug, "State: " + state.name + " ", state.whenStmentTxt.Replace("\t", " "));
+                    } else
+                    {
+                        Utils.WriteLogFile(Utils.logType.Debug, "State: " + state.name + " doesn't have a WHEN statement");
                     }
                 }
                 //TODO: Find transitions to next states foreach state in fsmStates
@@ -164,7 +163,7 @@ namespace VHDL_FSM_Visualizer
                         string line = linesOfCode[i].Replace("\t", String.Empty).Replace("\n", String.Empty);
                         if (ifsCount == 0 && line.IndexOf(fsmNextStateVar) != -1) //transition found outside of Condition
                         {
-                            state.next_states.Add(GetStateForTransition(line, fsmStates, fsmNextStateVar), "");
+                            state.next_states.Add(GetStateForTransition(line, fsmStates, fsmNextStateVar), "always");
                         }
                         else if (i > startIfLine && line.IndexOf(fsmNextStateVar) != -1)
                         {
@@ -192,7 +191,7 @@ namespace VHDL_FSM_Visualizer
             }
             else
             {
-                MessageBox.Show("No FSM case found based on " + fsmCurrStateVar + ".", "VHDL FSM case statement not found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                Utils.WriteLogFile(Utils.logType.Debug, "Case statement could not be found for variable", fsmCurrStateVar);
             }
 
             return fsmStates;
@@ -202,7 +201,7 @@ namespace VHDL_FSM_Visualizer
         {
             foreach (FSM_State state in states)
             {
-                if (Regex.IsMatch(line, fsmNextStateVar+ @"(\s+|\t+)?<=(\s+|\t+)?" + state.name, RegexOptions.IgnoreCase))
+                if (Regex.IsMatch(line, fsmNextStateVar+ @"(\s+|\t+)?<=(\s+|\t+)?(?:^|)" + state.name + @"(?:$|\W)", RegexOptions.IgnoreCase))
                 {
                     return state;
                 }
@@ -276,7 +275,7 @@ namespace VHDL_FSM_Visualizer
 
         public static string KeepOnlyConditionText(string str)
         {
-            return Regex.Replace(str, @"(if|then|else|elsif|\t+|\s+)", String.Empty, RegexOptions.IgnoreCase);
+            return Regex.Replace(str, @"(if|then|elsif|\t+)", String.Empty, RegexOptions.IgnoreCase);
         }
 
         public static string RemoveLeadingMultiTabs(string str)

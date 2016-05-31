@@ -10,6 +10,8 @@ using GraphX.Controls.Models;
 using QuickGraph;
 using System.Windows;
 using System.Linq;
+using System.Drawing;
+using VHDL_FSM_Visualiser.Models;
 
 namespace VHDL_FSM_Visualizer
 {
@@ -17,6 +19,7 @@ namespace VHDL_FSM_Visualizer
     {
         //FSM Vars
         List<FSM_State> fsmStates = new List<FSM_State>();
+        GraphLayoutOptions graphLayoutOptions = new GraphLayoutOptions();
         string vhdlFilePath;
         string[] vhdlFileLinesOfCode;
 
@@ -32,6 +35,8 @@ namespace VHDL_FSM_Visualizer
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            toolStripComboBox1.SelectedIndex = (int) graphLayoutOptions.layoutAlgorithm;
+            toolStripComboBox2.SelectedIndex = (int) graphLayoutOptions.edgeRoutingAlgorithm;
             wpfHost.Child = GenerateWpfVisuals();
             _zoomctrl.ZoomToFill();
 
@@ -55,16 +60,18 @@ namespace VHDL_FSM_Visualizer
                 LogicCore = logic,
                 EdgeLabelFactory = new DefaultEdgelabelFactory()
             };
-            _gArea.ShowAllEdgesLabels(true);
+            _gArea.ShowAllEdgesLabels(graphLayoutOptions.showAllEdgesLabels);
             logic.Graph = GenerateGraph();
-            logic.DefaultLayoutAlgorithm = LayoutAlgorithmTypeEnum.FR;
-            logic.DefaultLayoutAlgorithmParams = logic.AlgorithmFactory.CreateLayoutParameters(LayoutAlgorithmTypeEnum.FR);
+            logic.DefaultLayoutAlgorithm = graphLayoutOptions.layoutAlgorithm;
+            logic.DefaultLayoutAlgorithmParams = logic.AlgorithmFactory.CreateLayoutParameters(graphLayoutOptions.layoutAlgorithm);
+            logic.EdgeCurvingEnabled = true;
+            logic.EnableParallelEdges = true;
             //((LinLogLayoutParameters)logic.DefaultLayoutAlgorithmParams). = 100;
-            logic.DefaultOverlapRemovalAlgorithm = OverlapRemovalAlgorithmTypeEnum.FSA;
-            logic.DefaultOverlapRemovalAlgorithmParams = logic.AlgorithmFactory.CreateOverlapRemovalParameters(OverlapRemovalAlgorithmTypeEnum.FSA);
-            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).HorizontalGap = 100;
-            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).VerticalGap = 100;
-            logic.DefaultEdgeRoutingAlgorithm = EdgeRoutingAlgorithmTypeEnum.SimpleER;
+            logic.DefaultOverlapRemovalAlgorithm = graphLayoutOptions.overlapRemovalAlgorithm;
+            logic.DefaultOverlapRemovalAlgorithmParams = logic.AlgorithmFactory.CreateOverlapRemovalParameters(graphLayoutOptions.overlapRemovalAlgorithm);
+            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).HorizontalGap = graphLayoutOptions.overlapRemovalHorizontalGap;
+            ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).VerticalGap = graphLayoutOptions.overlapRemovalVerticalGap;
+            logic.DefaultEdgeRoutingAlgorithm = graphLayoutOptions.edgeRoutingAlgorithm;
             logic.AsyncAlgorithmCompute = false;
             _zoomctrl.Content = _gArea;
             _gArea.RelayoutFinished += gArea_RelayoutFinished;
@@ -79,7 +86,6 @@ namespace VHDL_FSM_Visualizer
         void gArea_RelayoutFinished(object sender, EventArgs e)
         {
             _zoomctrl.ZoomToFill();
-
         }
 
         private FSMGraph GenerateGraph()
@@ -100,7 +106,7 @@ namespace VHDL_FSM_Visualizer
                     FSM_State stateSrc = fsmStates[j];
                     if (stateSrc.next_states.ContainsKey(stateDst))
                     {
-                        var dataEdge = new DataEdge(vlist[j], vlist[i]) { Text = stateSrc.next_states[stateDst] };
+                        var dataEdge = new DataEdge(vlist[j], vlist[i]) { Condition = stateSrc.next_states[stateDst] };
                         dataGraph.AddEdge(dataEdge);
                     }
                 }
@@ -111,10 +117,13 @@ namespace VHDL_FSM_Visualizer
         private void loadFileBtn_Click(object sender, EventArgs e)
         {
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
-            Utils.WriteLogFile(Utils.logType.Info, "Loading File: ", openFileDialog1.FileName);
             if (result == DialogResult.OK) // Test result.
             {
+                Utils.WriteLogFile(Utils.logType.Info, "Loading File: ", openFileDialog1.FileName);
                 LoadVHDLFile(openFileDialog1.FileName, true);
+                fileSystemWatcher1.Filter = openFileDialog1.SafeFileName;
+                fileSystemWatcher1.Path = Path.GetDirectoryName(openFileDialog1.FileName);
+                Utils.WriteLogFile(Utils.logType.Info, "Filewatcher attached to file: ", fileSystemWatcher1.Filter);
             }
         }
 
@@ -124,8 +133,8 @@ namespace VHDL_FSM_Visualizer
             _gArea.SetVerticesDrag(true, true);
             if (relayout)
             {
-            _zoomctrl.ZoomToFill();
-        }
+                _zoomctrl.ZoomToFill();
+            }
         }
 
         private void refreshGraphBtn_Click(object sender, EventArgs e)
@@ -136,6 +145,7 @@ namespace VHDL_FSM_Visualizer
 
         private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
         {
+            Utils.WriteLogFile(Utils.logType.Info, "File changed: ", vhdlFilePath);
             LoadVHDLFile(vhdlFilePath, true);
         }
 
@@ -148,8 +158,6 @@ namespace VHDL_FSM_Visualizer
             toolStripProgressBar1.Visible = true;
             toolStripProgressBar1.Value = 0; //zero progress bar
             Cursor.Current = Cursors.WaitCursor; //make wait cursor
-            fileSystemWatcher1.Filter = openFileDialog1.SafeFileName;
-            fileSystemWatcher1.Path = Path.GetDirectoryName(vhdlFilePath);
             try
             {
                 toolStripProgressBar1.Value = 10;
@@ -169,9 +177,12 @@ namespace VHDL_FSM_Visualizer
                 if (fileRead)
                 {
                     toolStripProgressBar1.Value = 30;
+                    Utils.WriteLogFile(Utils.logType.Info, "Parsing states enumeration: ");
                     fsmStates = Utils.vhdlParseStatesDecleration(vhdlFileLinesOfCode, fsmTypeTxtBox.Text);
+                    Utils.WriteLogFile(Utils.logType.Info, "States found, N = ", fsmStates.Count.ToString());
                     if (fsmStates.Count > 0)
                     {
+                        Utils.WriteLogFile(Utils.logType.Info, "Parsing states transitions: ");
                         fsmStates = Utils.vhdlParseStatesTransitions(fsmStates, vhdlFileLinesOfCode, currStateTxtBox.Text, nextStateTxtBox.Text);
                         toolStripProgressBar1.Value = 70;
                         wpfHost.Child = GenerateWpfVisuals();
@@ -183,18 +194,95 @@ namespace VHDL_FSM_Visualizer
                     }
                     else
                     {
+                        Utils.WriteLogFile(Utils.logType.Error, "No states where found", fsmStates.Count.ToString());
                         toolStripProgressBar1.Value = 0;
                         return false;
                     }
                 }
                 else
                 {
+                    Utils.WriteLogFile(Utils.logType.Error, "Could not read file", filePath);
                     return false;
                 }
             }
-            catch (IOException)
+            catch (IOException ex)
             {
+                Utils.WriteLogFile(Utils.logType.Error, "Exception occured with message: " + ex.Message, "Data: \n" + ex.Data);
                 return false;
+            }
+        }
+
+        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void splitContainer1_Paint(object sender, PaintEventArgs e)
+        {
+            var control = sender as SplitContainer;
+            //paint the three dots'
+            System.Drawing.Point[] points = new System.Drawing.Point[5];
+            var w = control.Width;
+            var h = control.Height;
+            var d = control.SplitterDistance;
+            var sW = control.SplitterWidth;
+
+            //calculate the position of the points'
+            if (control.Orientation == Orientation.Horizontal)
+            {
+                points[0] = new System.Drawing.Point((w / 2), d + (sW / 2));
+                points[1] = new System.Drawing.Point(points[0].X - 10, points[0].Y);
+                points[2] = new System.Drawing.Point(points[0].X + 10, points[0].Y);
+                points[3] = new System.Drawing.Point(points[0].X - 20, points[0].Y);
+                points[4] = new System.Drawing.Point(points[0].X + 20, points[0].Y);
+            }
+            else
+            {
+                points[0] = new System.Drawing.Point(d + (sW / 2), (h / 2));
+                points[1] = new System.Drawing.Point(points[0].X, points[0].Y - 10);
+                points[2] = new System.Drawing.Point(points[0].X, points[0].Y + 10);
+                points[1] = new System.Drawing.Point(points[0].X, points[0].Y - 20);
+                points[2] = new System.Drawing.Point(points[0].X, points[0].Y + 20);
+            }
+
+            foreach (System.Drawing.Point p in points)
+            {
+                p.Offset(-2, -2);
+                e.Graphics.FillEllipse(SystemBrushes.ControlDark,
+                    new Rectangle(p, new System.Drawing.Size(3, 3)));
+
+                p.Offset(1, 1);
+                e.Graphics.FillEllipse(SystemBrushes.ControlLight,
+                    new Rectangle(p, new System.Drawing.Size(3, 3)));
+            }
+        }
+
+        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_gArea != null)
+            {
+                graphLayoutOptions.layoutAlgorithm = (LayoutAlgorithmTypeEnum)toolStripComboBox1.SelectedIndex;
+                _gArea.LogicCore.DefaultLayoutAlgorithm = graphLayoutOptions.layoutAlgorithm;
+                refreshGraph(true);
+            }
+        }
+
+        private void toolStripComboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_gArea != null)
+            {
+                graphLayoutOptions.edgeRoutingAlgorithm = (EdgeRoutingAlgorithmTypeEnum)toolStripComboBox2.SelectedIndex;
+                _gArea.LogicCore.DefaultLayoutAlgorithm = graphLayoutOptions.layoutAlgorithm;
+                refreshGraph(true);
+            }
+        }
+
+        private void toolStripButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_gArea != null)
+            {
+                _gArea.ShowAllEdgesLabels(toolStripButton1.Checked);
+                refreshGraph(true);
             }
         }
     }

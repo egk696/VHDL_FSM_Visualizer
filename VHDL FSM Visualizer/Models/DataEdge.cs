@@ -38,12 +38,12 @@ namespace VHDL_FSM_Visualizer
         /// <summary>
         /// Custom string property for example
         /// </summary>
-        public string Text { get; set; }
+        public string Condition { get; set; }
 
         #region GET members
         public override string ToString()
         {
-            return Text;
+            return Condition;
         }
 
         #endregion
