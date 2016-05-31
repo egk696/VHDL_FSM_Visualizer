@@ -12,7 +12,7 @@ namespace VHDL_FSM_Visualizer
         public string name;
         public int whenStmentStartLine = -1, whenStmentEndLine = -1;
         public string whenStmentTxt;
-        public Dictionary<string, FSM_State> next_states;
+        public Dictionary<FSM_State, string> next_states;
 
         public FSM_State()
         {
@@ -22,13 +22,13 @@ namespace VHDL_FSM_Visualizer
         {
             this.id = id;
             this.name = name;
-            this.next_states = new Dictionary<string, FSM_State>();
+            this.next_states = new Dictionary<FSM_State, string>();
             this.whenStmentStartLine = -1;
             this.whenStmentEndLine = -1;
             this.whenStmentTxt = "";
         }
 
-        public FSM_State(int id, string name, Dictionary<string, FSM_State> next_states)
+        public FSM_State(int id, string name, Dictionary<FSM_State, string> next_states)
         {
             this.id = id;
             this.name = name;

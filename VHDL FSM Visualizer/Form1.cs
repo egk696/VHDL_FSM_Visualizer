@@ -27,16 +27,17 @@ namespace VHDL_FSM_Visualizer
         public Form1()
         {
             InitializeComponent();
-
+            this.Shown += new System.EventHandler(this.Form1_Shown);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             wpfHost.Child = GenerateWpfVisuals();
             _zoomctrl.ZoomToFill();
-            this.Activated += AfterLoading;
+
         }
-        private void AfterLoading(object sender, EventArgs e)
+
+        private void Form1_Shown(object sender, EventArgs e)
         {
             Utils.WriteLogFile(Utils.logType.Info, "Welcome to VHDL FSM Visualizer");
         }
@@ -54,7 +55,7 @@ namespace VHDL_FSM_Visualizer
                 LogicCore = logic,
                 EdgeLabelFactory = new DefaultEdgelabelFactory()
             };
-            _gArea.ShowAllEdgesLabels(false);
+            _gArea.ShowAllEdgesLabels(true);
             logic.Graph = GenerateGraph();
             logic.DefaultLayoutAlgorithm = LayoutAlgorithmTypeEnum.LinLog;
             logic.DefaultLayoutAlgorithmParams = logic.AlgorithmFactory.CreateLayoutParameters(LayoutAlgorithmTypeEnum.LinLog);
@@ -63,7 +64,7 @@ namespace VHDL_FSM_Visualizer
             logic.DefaultOverlapRemovalAlgorithmParams = logic.AlgorithmFactory.CreateOverlapRemovalParameters(OverlapRemovalAlgorithmTypeEnum.FSA);
             ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).HorizontalGap = 50;
             ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).VerticalGap = 50;
-            logic.DefaultEdgeRoutingAlgorithm = EdgeRoutingAlgorithmTypeEnum.None;
+            logic.DefaultEdgeRoutingAlgorithm = EdgeRoutingAlgorithmTypeEnum.SimpleER;
             logic.AsyncAlgorithmCompute = false;
             _zoomctrl.Content = _gArea;
             _gArea.RelayoutFinished += gArea_RelayoutFinished;
@@ -85,7 +86,7 @@ namespace VHDL_FSM_Visualizer
         {
             //FOR DETAILED EXPLANATION please see SimpleGraph example project
             var dataGraph = new FSMGraph();
-            foreach(FSM_State state in fsmStates)
+            foreach (FSM_State state in fsmStates)
             {
                 var dataVertex = new DataVertex(state.name, state.whenStmentTxt);
                 dataGraph.AddVertex(dataVertex);
@@ -94,37 +95,26 @@ namespace VHDL_FSM_Visualizer
             for (int i = 0; i < vlist.Count; i++)
             {
                 FSM_State stateDst = fsmStates[i];
-                for (int j=0;j < vlist.Count; j++)
+                for (int j = 0; j < vlist.Count; j++)
                 {
                     FSM_State stateSrc = fsmStates[j];
-                    if (stateSrc.next_states.ContainsValue(stateDst))
+                    if (stateSrc.next_states.ContainsKey(stateDst))
                     {
-                        var dataEdge = new DataEdge(vlist[j], vlist[i]) { Text = string.Format("{0} -> {1}", vlist[j], vlist[i]) };
+                        var dataEdge = new DataEdge(vlist[j], vlist[i]) { Text = stateSrc.next_states[stateDst] };
                         dataGraph.AddEdge(dataEdge);
                     }
                 }
             }
-            //Then create two edges optionaly defining Text property to show who are connected
-            //var dataEdge = new DataEdge(vlist[0], vlist[1]) { Text = string.Format("{0} -> {1}", vlist[0], vlist[1]) };
-            //dataGraph.AddEdge(dataEdge);
-            //dataEdge = new DataEdge(vlist[2], vlist[0]) { Text = string.Format("{0} -> {1}", vlist[2], vlist[0]) };
-            //dataGraph.AddEdge(dataEdge);
-
-
-            //dataEdge = new DataEdge(vlist[1], vlist[2]) { Text = string.Format("{0} -> {1}", vlist[2], vlist[1]) };
-            //dataGraph.AddEdge(dataEdge);
             return dataGraph;
         }
 
         private void loadFileBtn_Click(object sender, EventArgs e)
         {
-            
             int size = -1;
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
-            Utils.WriteLogFile(Utils.logType.Info, "Loading File: ",openFileDialog1.FileName);
+            Utils.WriteLogFile(Utils.logType.Info, "Loading File: ", openFileDialog1.FileName);
             if (result == DialogResult.OK) // Test result.
             {
-                
                 toolStripProgressBar1.Visible = true;
                 toolStripProgressBar1.Value = 0; //zero progress bar
                 Cursor.Current = Cursors.WaitCursor; //make wait cursor
@@ -133,7 +123,6 @@ namespace VHDL_FSM_Visualizer
                 fileSystemWatcher1.Path = Path.GetDirectoryName(vhdlFilePath);
                 try
                 {
-                  
                     toolStripProgressBar1.Value = 10;
 
                     vhdlFileLinesOfCode = File.ReadAllLines(vhdlFilePath);
@@ -141,7 +130,7 @@ namespace VHDL_FSM_Visualizer
                     toolStripProgressBar1.Value = 30;
 
                     fsmStates = Utils.vhdlParseStatesDecleration(vhdlFileLinesOfCode, fsmTypeTxtBox.Text);
-                    fsmStates = Utils.vhdlParseStatesTransitions(fsmStates, vhdlFileLinesOfCode,  currStateTxtBox.Text, nextStateTxtBox.Text);
+                    fsmStates = Utils.vhdlParseStatesTransitions(fsmStates, vhdlFileLinesOfCode, currStateTxtBox.Text, nextStateTxtBox.Text);
 
                     if (fsmStates.Count > 0)
                     {
@@ -152,19 +141,18 @@ namespace VHDL_FSM_Visualizer
                         refreshGraph();
                         Cursor.Current = Cursors.Default; // make default cursor
                         toolStripProgressBar1.Value = 100; //full progress bar
-                        Utils.WriteLogFile(Utils.logType.Info, openFileDialog1.FileName+ " Loaded successfully " );
-
                         toolStripProgressBar1.Visible = false;
-                      
-                    } else
+                        Utils.WriteLogFile(Utils.logType.Info, openFileDialog1.FileName, "Loaded successfully");
+                    }
+                    else
                     {
-                        
+
                         toolStripProgressBar1.Value = 0;
                     }
                 }
                 catch (IOException ex)
                 {
-                    Utils.WriteLogFile(Utils.logType.Error, "Error while reading file", ex.StackTrace);
+                    Utils.WriteLogFile(Utils.logType.Error, "Error while reading file", ex.StackTrace.ToString());
                     Console.WriteLine("Error while reading file");
                 }
             }
@@ -182,19 +170,22 @@ namespace VHDL_FSM_Visualizer
             refreshGraph();
         }
 
+
         private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
         {
-            
+
             toolStripProgressBar1.Value = 0;
             toolStripProgressBar1.Value = 10;
 
             bool fileRead = false;
             while (!fileRead)
             {
-                try {
+                try
+                {
                     vhdlFileLinesOfCode = File.ReadAllLines(vhdlFilePath);
                     fileRead = true;
-                }catch(Exception)
+                }
+                catch (Exception)
                 {
                     fileRead = false;
                 }
@@ -202,7 +193,7 @@ namespace VHDL_FSM_Visualizer
 
             if (fileRead)
             {
-                
+
                 toolStripProgressBar1.Value = 30;
 
                 fsmStates = Utils.vhdlParseStatesDecleration(vhdlFileLinesOfCode, fsmTypeTxtBox.Text);
@@ -211,12 +202,14 @@ namespace VHDL_FSM_Visualizer
 
                 wpfHost.Child = GenerateWpfVisuals();
                 _zoomctrl.ZoomToFill();
-                
+
                 toolStripProgressBar1.Value = 100;
 
                 refreshGraph();
             }
-            
+
         }
     }
 }
+
+

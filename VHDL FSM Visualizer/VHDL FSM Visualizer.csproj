@@ -92,7 +92,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\FSMGraph.cs" />
-    <Compile Include="FSM_State.cs" />
+    <Compile Include="Models\FSM_State.cs" />
     <Compile Include="Models\FSMGraphArea.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
