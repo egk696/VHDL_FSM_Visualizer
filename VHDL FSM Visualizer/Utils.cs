@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,7 +11,7 @@ namespace VHDL_FSM_Visualizer
 {
     class Utils
     {
-        public enum logType {Info,Error,Debug};
+        public enum logType { Info, Error, Debug };
         static int fsmDeclarationLine = -1;
         static int lineOfOpenEnum = -1, indexOfOpenEnum = -1, lineOfCloseEnum = -1, indexOfCloseEnum = -1;
         static string fsmDeclerationText = "";
@@ -80,7 +81,7 @@ namespace VHDL_FSM_Visualizer
                 //Create the states
                 for (int i = 0; i < statesText.Length; i++)
                 {
-                    fsmStates.Add(new FSM_State (i, statesText[i]));
+                    fsmStates.Add(new FSM_State(i, statesText[i]));
                 }
             }
             catch (Exception ex)
@@ -97,7 +98,7 @@ namespace VHDL_FSM_Visualizer
             for (int i = lineOfCloseEnum; i < linesOfCode.Length; i++)
             {
                 string line = linesOfCode[i];
-                if(CaseForFSMExists(line, fsmCurrStateVar))
+                if (CaseForFSMExists(line, fsmCurrStateVar))
                 {
                     fsmCaseStartLine = i;
                 }
@@ -148,7 +149,8 @@ namespace VHDL_FSM_Visualizer
                         }
                         state.whenStmentTxt = sb.ToString();
                         Utils.WriteLogFile(Utils.logType.Debug, "State: " + state.name + " ", state.whenStmentTxt.Replace("\t", " "));
-                    } else
+                    }
+                    else
                     {
                         Utils.WriteLogFile(Utils.logType.Debug, "State: " + state.name + " doesn't have a WHEN statement");
                     }
@@ -201,7 +203,7 @@ namespace VHDL_FSM_Visualizer
         {
             foreach (FSM_State state in states)
             {
-                if (Regex.IsMatch(line, fsmNextStateVar+ @"(\s+|\t+)?<=(\s+|\t+)?(?:^|)" + state.name + @"(?:$|\W)", RegexOptions.IgnoreCase))
+                if (Regex.IsMatch(line, fsmNextStateVar + @"(\s+|\t+)?<=(\s+|\t+)?(?:^|)" + state.name + @"(?:$|\W)", RegexOptions.IgnoreCase))
                 {
                     return state;
                 }
@@ -285,11 +287,23 @@ namespace VHDL_FSM_Visualizer
 
         public static void WriteLogFile(logType type, string message, string extras = "")
         {
+            System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             Form1 form = Form.ActiveForm as Form1;
             if (form != null)
             {
-                form.LogOutput.Items.Add(DateTime.Now.ToString("HH:mm:ss") + ": ----"+type.ToString()+":  "+message+"  "+extras );
+                if (type == logType.Debug)
+                {
+                    if (bool.Parse(config.AppSettings.Settings["DebugMode"].Value.ToString()))
+                    {
+                        form.LogOutput.Items.Add(DateTime.Now.ToString("HH:mm:ss") + ": ----" + type.ToString() + ":  " + message + "  " + extras);
+                    }
+                }
+                else
+                {
+                    form.LogOutput.Items.Add(DateTime.Now.ToString("HH:mm:ss") + ": ----" + type.ToString() + ":  " + message + "  " + extras);
+                }
             }
+
         }
     }
 }
