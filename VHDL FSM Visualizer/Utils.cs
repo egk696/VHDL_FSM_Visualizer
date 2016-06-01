@@ -303,7 +303,8 @@ namespace VHDL_FSM_Visualizer
                     form.LogOutput.Items.Add(DateTime.Now.ToString("HH:mm:ss") + ": ----" + type.ToString() + ":  " + message + "  " + extras);
                 }
             }
-
+            form.LogOutput.SelectedIndex = form.LogOutput.Items.Count - 1;
+            form.LogOutput.SelectedIndex = -1;
         }
     }
 }

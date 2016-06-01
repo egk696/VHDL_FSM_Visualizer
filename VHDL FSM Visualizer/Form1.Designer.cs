@@ -41,6 +41,12 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.nextStateTxtBox = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripComboBox2 = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -50,12 +56,6 @@
             this.LogOutput = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripComboBox2 = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
@@ -91,8 +91,9 @@
             this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.ShowItemToolTips = false;
+            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip1.Size = new System.Drawing.Size(1361, 39);
+            this.toolStrip1.Stretch = true;
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -104,6 +105,7 @@
             this.loadFileBtn.Name = "loadFileBtn";
             this.loadFileBtn.Size = new System.Drawing.Size(36, 36);
             this.loadFileBtn.Text = "loadFileBtn";
+            this.loadFileBtn.ToolTipText = "Load .vhd file";
             this.loadFileBtn.Click += new System.EventHandler(this.loadFileBtn_Click);
             // 
             // refreshGraphBtn
@@ -112,14 +114,15 @@
             this.refreshGraphBtn.Image = ((System.Drawing.Image)(resources.GetObject("refreshGraphBtn.Image")));
             this.refreshGraphBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.refreshGraphBtn.Name = "refreshGraphBtn";
-            this.refreshGraphBtn.Size = new System.Drawing.Size(52, 52);
+            this.refreshGraphBtn.Size = new System.Drawing.Size(36, 36);
             this.refreshGraphBtn.Text = "refreshGraphBtn";
+            this.refreshGraphBtn.ToolTipText = "Refresh layout";
             this.refreshGraphBtn.Click += new System.EventHandler(this.refreshGraphBtn_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 55);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripLabel3
             // 
@@ -136,19 +139,20 @@
             this.fsmTypeTxtBox.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.fsmTypeTxtBox.MaxLength = 512;
             this.fsmTypeTxtBox.Name = "fsmTypeTxtBox";
-            this.fsmTypeTxtBox.Size = new System.Drawing.Size(140, 55);
+            this.fsmTypeTxtBox.Size = new System.Drawing.Size(140, 39);
             this.fsmTypeTxtBox.Text = "State_Type";
+            this.fsmTypeTxtBox.ToolTipText = "Name for the FSM enum type.";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 55);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(200, 52);
+            this.toolStripLabel1.Size = new System.Drawing.Size(200, 36);
             this.toolStripLabel1.Text = "Current State Variable Name:";
             // 
             // currStateTxtBox
@@ -158,19 +162,20 @@
             this.currStateTxtBox.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.currStateTxtBox.MaxLength = 512;
             this.currStateTxtBox.Name = "currStateTxtBox";
-            this.currStateTxtBox.Size = new System.Drawing.Size(140, 55);
+            this.currStateTxtBox.Size = new System.Drawing.Size(140, 39);
             this.currStateTxtBox.Text = "current_state";
+            this.currStateTxtBox.ToolTipText = "Name for present state variable.";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 55);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripLabel2
             // 
             this.toolStripLabel2.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(183, 52);
+            this.toolStripLabel2.Size = new System.Drawing.Size(183, 36);
             this.toolStripLabel2.Text = "Next State Variable Name:";
             // 
             // nextStateTxtBox
@@ -180,8 +185,74 @@
             this.nextStateTxtBox.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.nextStateTxtBox.MaxLength = 512;
             this.nextStateTxtBox.Name = "nextStateTxtBox";
-            this.nextStateTxtBox.Size = new System.Drawing.Size(140, 55);
+            this.nextStateTxtBox.Size = new System.Drawing.Size(140, 39);
             this.nextStateTxtBox.Text = "next_state";
+            this.nextStateTxtBox.ToolTipText = "Variable name for next state transition assignments.";
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 39);
+            // 
+            // toolStripComboBox1
+            // 
+            this.toolStripComboBox1.AutoToolTip = true;
+            this.toolStripComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.toolStripComboBox1.Items.AddRange(new object[] {
+            "BoundedFR",
+            "Circular",
+            "CompoundFDP",
+            "Custom",
+            "EfficientSugiyama",
+            "FR",
+            "ISOM",
+            "KK",
+            "LinLog",
+            "SimpleRandom",
+            "Sugiyama",
+            "Tree"});
+            this.toolStripComboBox1.MaxDropDownItems = 12;
+            this.toolStripComboBox1.Name = "toolStripComboBox1";
+            this.toolStripComboBox1.Size = new System.Drawing.Size(121, 39);
+            this.toolStripComboBox1.ToolTipText = "Layout Algorithm";
+            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 39);
+            // 
+            // toolStripComboBox2
+            // 
+            this.toolStripComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.toolStripComboBox2.Items.AddRange(new object[] {
+            "None",
+            "Pathfinder",
+            "SimpleER",
+            "Bundling"});
+            this.toolStripComboBox2.Name = "toolStripComboBox2";
+            this.toolStripComboBox2.Size = new System.Drawing.Size(121, 39);
+            this.toolStripComboBox2.ToolTipText = "Edge Routing Algorithm";
+            this.toolStripComboBox2.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox2_SelectedIndexChanged);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 39);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.CheckOnClick = true;
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(73, 36);
+            this.toolStripButton1.Text = "Edge Labels";
+            this.toolStripButton1.ToolTipText = "Toggle edge label visibility";
+            this.toolStripButton1.CheckedChanged += new System.EventHandler(this.toolStripButton1_CheckedChanged);
             // 
             // statusStrip1
             // 
@@ -228,8 +299,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.LogOutput.FormattingEnabled = true;
+            this.LogOutput.HorizontalScrollbar = true;
             this.LogOutput.Location = new System.Drawing.Point(3, 25);
             this.LogOutput.Name = "LogOutput";
+            this.LogOutput.ScrollAlwaysVisible = true;
             this.LogOutput.Size = new System.Drawing.Size(1361, 95);
             this.LogOutput.TabIndex = 4;
             // 
@@ -267,70 +340,6 @@
             this.splitContainer1.SplitterDistance = 380;
             this.splitContainer1.TabIndex = 6;
             this.splitContainer1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Paint);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripComboBox1
-            // 
-            this.toolStripComboBox1.AutoToolTip = true;
-            this.toolStripComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.toolStripComboBox1.Items.AddRange(new object[] {
-            "BoundedFR",
-            "Circular",
-            "CompoundFDP",
-            "Custom",
-            "EfficientSugiyama",
-            "FR",
-            "ISOM",
-            "KK",
-            "LinLog",
-            "SimpleRandom",
-            "Sugiyama",
-            "Tree"});
-            this.toolStripComboBox1.MaxDropDownItems = 12;
-            this.toolStripComboBox1.Name = "toolStripComboBox1";
-            this.toolStripComboBox1.Size = new System.Drawing.Size(121, 39);
-            this.toolStripComboBox1.ToolTipText = "Layout Algorithm";
-            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
-            // 
-            // toolStripComboBox2
-            // 
-            this.toolStripComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.toolStripComboBox2.Items.AddRange(new object[] {
-            "None",
-            "Pathfinder",
-            "SimpleER",
-            "Bundling"});
-            this.toolStripComboBox2.Name = "toolStripComboBox2";
-            this.toolStripComboBox2.Size = new System.Drawing.Size(121, 39);
-            this.toolStripComboBox2.ToolTipText = "Edge Routing Algorithm";
-            this.toolStripComboBox2.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox2_SelectedIndexChanged);
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 39);
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.CheckOnClick = true;
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(73, 36);
-            this.toolStripButton1.Text = "Edge Labels";
-            this.toolStripButton1.CheckedChanged += new System.EventHandler(this.toolStripButton1_CheckedChanged);
             // 
             // Form1
             // 
