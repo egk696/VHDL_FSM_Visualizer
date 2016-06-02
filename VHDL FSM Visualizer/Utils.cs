@@ -11,6 +11,9 @@ namespace VHDL_FSM_Visualizer
 {
     class Utils
     {
+
+        public static Form1 form { get; set; }
+
         public enum logType { Info, Error, Debug };
         static int fsmDeclarationLine = -1;
         static int lineOfOpenEnum = -1, indexOfOpenEnum = -1, lineOfCloseEnum = -1, indexOfCloseEnum = -1;
@@ -158,18 +161,46 @@ namespace VHDL_FSM_Visualizer
                 //TODO: Find transitions to next states foreach state in fsmStates
                 foreach (FSM_State state in fsmStates)
                 {
-                    int startIfLine = -1, endIfLine = -1;
+                    int startIfLine = -1, endIfLine = -1, startElseLine = -1;
                     int ifsCount = 0;
                     for (int i = state.whenStmentStartLine; i < state.whenStmentEndLine; i++)
                     {
                         string line = linesOfCode[i].Replace("\t", String.Empty).Replace("\n", String.Empty);
                         if (ifsCount == 0 && line.IndexOf(fsmNextStateVar) != -1) //transition found outside of Condition
                         {
-                            state.next_states.Add(GetStateForTransition(line, fsmStates, fsmNextStateVar), "always");
+                            FSM_State next_state = GetStateForTransition(line, fsmStates, fsmNextStateVar);
+                            if (next_state != null)
+                            {
+                                state.next_states.Add(next_state, "always");
+                            }
+                            else
+                            {
+                                Utils.WriteLogFile(Utils.logType.Error, "line #" + (i + 1) + ": " + line + " has an unknown next state");
+                            }
                         }
-                        else if (i > startIfLine && line.IndexOf(fsmNextStateVar) != -1)
+                        else if (i > startIfLine && (i<startElseLine || startElseLine==-1) && line.IndexOf(fsmNextStateVar) != -1)
                         {
-                            state.next_states.Add(GetStateForTransition(line, fsmStates, fsmNextStateVar), KeepOnlyConditionText(linesOfCode[startIfLine]));
+                            FSM_State next_state = GetStateForTransition(line, fsmStates, fsmNextStateVar);
+                            if (next_state != null)
+                            {
+                                state.next_states.Add(next_state, KeepOnlyConditionText(linesOfCode[startIfLine]));
+                            }
+                            else
+                            {
+                                Utils.WriteLogFile(Utils.logType.Error, "line #" + (i + 1) + ": " + line + " has an unknown next state");
+                            }
+                        }
+                        else if (i > startElseLine && line.IndexOf(fsmNextStateVar) != -1)
+                        {
+                            FSM_State next_state = GetStateForTransition(line, fsmStates, fsmNextStateVar);
+                            if (next_state != null)
+                            {
+                                state.next_states.Add(next_state, "not(" + KeepOnlyConditionText(linesOfCode[startIfLine]) + ")");
+                            }
+                            else
+                            {
+                                Utils.WriteLogFile(Utils.logType.Error, "line #" + (i + 1) + ": " + line + " has an unknown next state");
+                            }
                         }
                         if (IsIfStatement(line))
                         {
@@ -182,7 +213,7 @@ namespace VHDL_FSM_Visualizer
                         }
                         else if (IsElseStatement(line))
                         {
-                            startIfLine = i;
+                            startElseLine = i;
                         }
                         else if (IsEndIfStatement(line))
                         {
@@ -288,7 +319,6 @@ namespace VHDL_FSM_Visualizer
         public static void WriteLogFile(logType type, string message, string extras = "")
         {
             System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            Form1 form = Form.ActiveForm as Form1;
             if (form != null)
             {
                 if (type == logType.Debug)
@@ -302,9 +332,14 @@ namespace VHDL_FSM_Visualizer
                 {
                     form.LogOutput.Items.Add(DateTime.Now.ToString("HH:mm:ss") + ": ----" + type.ToString() + ":  " + message + "  " + extras);
                 }
+
+                form.LogOutput.SelectedIndex = form.LogOutput.Items.Count - 1;
+                form.LogOutput.SelectedIndex = -1;
             }
-            form.LogOutput.SelectedIndex = form.LogOutput.Items.Count - 1;
-            form.LogOutput.SelectedIndex = -1;
+            else
+            {
+                return;
+            }
         }
     }
 }

@@ -66,7 +66,7 @@ ARCHITECTURE behaviour OF videoComposer_FSMD IS
 	SIGNAL OutPort     : STD_LOGIC_VECTOR(Size-1 DOWNTO 0);
 	SIGNAL instr : Instruction_type := ( '0' , Rx   , Rx   , Rx   , OpX   , OpX     , '0' );
 
-	TYPE   State_Type IS (reset_state,S_ReadRed, S_ReadGreenWriteRed, S_ReadBlueWriteGreen, S_ProcessBlue, S_WriteBlue, S_Idle);
+	TYPE   State_Type IS (reset_state, S_ReadRed, S_ReadGreenWriteRed, S_ReadBlueWriteGreen, S_ProcessBlue, S_WriteBlue, S_Idle);
 
 	SIGNAL current_state,   next_state   : State_Type;
 	-- Instr counter for the datapath

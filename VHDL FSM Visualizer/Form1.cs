@@ -30,6 +30,7 @@ namespace VHDL_FSM_Visualizer
         public Form1()
         {
             InitializeComponent();
+            Utils.form = this;
             this.Shown += new System.EventHandler(this.Form1_Shown);
         }
 
@@ -169,8 +170,9 @@ namespace VHDL_FSM_Visualizer
                         vhdlFileLinesOfCode = File.ReadAllLines(vhdlFilePath);
                         fileRead = true;
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        Utils.WriteLogFile(Utils.logType.Debug, "File is locked, trying to read again... ", ex.Message);
                         fileRead = false;
                     }
                 }
@@ -194,7 +196,7 @@ namespace VHDL_FSM_Visualizer
                     }
                     else
                     {
-                        Utils.WriteLogFile(Utils.logType.Error, "No states where found", fsmStates.Count.ToString());
+                        Utils.WriteLogFile(Utils.logType.Error, "No states where found:", "Try to change the variable names according to the file you are loading");
                         toolStripProgressBar1.Value = 0;
                         return false;
                     }
