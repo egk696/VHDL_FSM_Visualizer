@@ -19,7 +19,7 @@ A VHDL helper that visualizes FSM states and transitions by tracking, in real-ti
 ### How To: Use the provided VHDL files to test the application
 There are 4 demo files provided for using along with the application and they are located in VHDL_FSM_Visualizer/Demo Files/
 
-*	**sdram_ctrl_de2_tb.vhd** has an enum type for FSM defined as **fsm_state_type**. There is only one variable that controls the transitions of the FSM (Moore), named **state**.
+* **sdram_ctrl_de2_tb.vhd** has an enum type for FSM defined as **fsm_state_type**. There is only one variable that controls the transitions of the FSM (Moore), named **state**.
 * **video_composer_fsmd.vhd** has an enum type for FSM defined as **State_Type**. There are two variables that control the transitions of the FSM (Latched Mealy), named **current_state** and **next_state** respectively.
-* mealy_4s.vhd has an enum type for FSM defined as **state_type**. There is only one variable that controls the transitions of the FSM, named **state**.
-* moore_4s.vhd has an enum type for FSM defined as **state_type**. There is only one variable that controls the transitions of the FSM, named **state**.
+* **mealy_4s.vhd** has an enum type for FSM defined as **state_type**. There is only one variable that controls the transitions of the FSM, named **state**.
+* **moore_4s.vhd** has an enum type for FSM defined as **state_type**. There is only one variable that controls the transitions of the FSM, named **state**.
