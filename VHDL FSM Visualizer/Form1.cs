@@ -180,7 +180,7 @@ namespace VHDL_FSM_Visualizer
                 {
                     toolStripProgressBar1.Value = 30;
                     Utils.WriteLogFile(Utils.logType.Info, "Parsing states enumeration: ");
-                    fsmStates = Utils.vhdlParseStatesDecleration(vhdlFileLinesOfCode, fsmTypeTxtBox.Text);
+                    fsmStates = Utils.vhdlParseStatesDecleration(Utils.vhdlRemoveComments(vhdlFileLinesOfCode), fsmTypeTxtBox.Text);
                     Utils.WriteLogFile(Utils.logType.Info, "States found, N = ", fsmStates.Count.ToString());
                     if (fsmStates.Count > 0)
                     {

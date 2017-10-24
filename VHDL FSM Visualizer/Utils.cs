@@ -95,6 +95,16 @@ namespace VHDL_FSM_Visualizer
             return fsmStates;
         }
 
+        public static string[] vhdlRemoveComments(string[] linesOfCode)
+        {
+            List<string> linesWithoutComents = new List<string>(linesOfCode.Length);
+            for (int i = 0; i < linesOfCode.Length; i++)
+            {
+                linesWithoutComents.Add(RemoveComments(linesOfCode[i]));
+            }
+            return linesWithoutComents.ToArray();
+        }
+
         public static List<FSM_State> vhdlParseStatesTransitions(List<FSM_State> fsmStates, string[] linesOfCode, string fsmCurrStateVar, string fsmNextStateVar)
         {
             //Find the case statement corresponding to the FSM defined by fsmCurrStateVar
@@ -299,6 +309,11 @@ namespace VHDL_FSM_Visualizer
         public static string RemoveNonCodeCharacters(string str)
         {
             return Regex.Replace(str, @"[^a-zA-Z0-9_.,;\(\)\{\}]+", String.Empty, RegexOptions.Compiled);
+        }
+
+        public static string RemoveComments(string str)
+        {
+            return Regex.Replace(str, @"\-\-.*", String.Empty, RegexOptions.Compiled);
         }
 
         public static string RemoveSpecialCharacters(string str)
