@@ -57,7 +57,6 @@ namespace VHDL_FSM_Visualizer
             var logic = new GXLogicCore<DataVertex, DataEdge, BidirectionalGraph<DataVertex, DataEdge>>();
             _gArea = new FSMGraphArea
             {
-                EnableWinFormsHostingMode = true,
                 LogicCore = logic,
                 EdgeLabelFactory = new DefaultEdgelabelFactory()
             };
