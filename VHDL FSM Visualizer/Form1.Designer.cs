@@ -139,7 +139,7 @@
             this.fsmTypeTxtBox.MaxLength = 512;
             this.fsmTypeTxtBox.Name = "fsmTypeTxtBox";
             this.fsmTypeTxtBox.Size = new System.Drawing.Size(140, 39);
-            this.fsmTypeTxtBox.Text = "State_Type";
+            this.fsmTypeTxtBox.Text = "state_type";
             this.fsmTypeTxtBox.ToolTipText = "Name for the FSM enum type.";
             // 
             // toolStripSeparator3
@@ -151,8 +151,8 @@
             // 
             this.toolStripLabel1.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(200, 36);
-            this.toolStripLabel1.Text = "Current State Variable Name:";
+            this.toolStripLabel1.Size = new System.Drawing.Size(167, 36);
+            this.toolStripLabel1.Text = "Current State Var Name:";
             // 
             // currStateTxtBox
             // 
@@ -174,8 +174,8 @@
             // 
             this.toolStripLabel2.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(183, 36);
-            this.toolStripLabel2.Text = "Next State Variable Name:";
+            this.toolStripLabel2.Size = new System.Drawing.Size(150, 36);
+            this.toolStripLabel2.Text = "Next State Var Name:";
             // 
             // nextStateTxtBox
             // 

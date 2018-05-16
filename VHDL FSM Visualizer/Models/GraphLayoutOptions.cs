@@ -19,7 +19,7 @@ namespace VHDL_FSM_Visualiser.Models
         public GraphLayoutOptions()
         {
             showAllEdgesLabels = false;
-            layoutAlgorithm = LayoutAlgorithmTypeEnum.KK;
+            layoutAlgorithm = LayoutAlgorithmTypeEnum.FR;
             overlapRemovalAlgorithm = OverlapRemovalAlgorithmTypeEnum.FSA;
             overlapRemovalHorizontalGap = 100;
             overlapRemovalVerticalGap = 100;

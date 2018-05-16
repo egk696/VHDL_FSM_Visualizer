@@ -50,33 +50,59 @@ namespace VHDL_FSM_Visualizer
 
         private UIElement GenerateWpfVisuals()
         {
-
-            _zoomctrl = new ZoomControl();
-            ZoomControl.SetViewFinderVisibility(_zoomctrl, Visibility.Visible);
-            /* ENABLES WINFORMS HOSTING MODE --- >*/
+            //Basic Options
             var logic = new GXLogicCore<DataVertex, DataEdge, BidirectionalGraph<DataVertex, DataEdge>>();
-            _gArea = new FSMGraphArea
-            {
-                LogicCore = logic,
-                EdgeLabelFactory = new DefaultEdgelabelFactory()
-            };
-            _gArea.ShowAllEdgesLabels(graphLayoutOptions.showAllEdgesLabels);
             logic.Graph = GenerateGraph();
             logic.DefaultLayoutAlgorithm = graphLayoutOptions.layoutAlgorithm;
             logic.DefaultLayoutAlgorithmParams = logic.AlgorithmFactory.CreateLayoutParameters(graphLayoutOptions.layoutAlgorithm);
             logic.EdgeCurvingEnabled = true;
             logic.EnableParallelEdges = true;
-            //((LinLogLayoutParameters)logic.DefaultLayoutAlgorithmParams). = 100;
             logic.DefaultOverlapRemovalAlgorithm = graphLayoutOptions.overlapRemovalAlgorithm;
             logic.DefaultOverlapRemovalAlgorithmParams = logic.AlgorithmFactory.CreateOverlapRemovalParameters(graphLayoutOptions.overlapRemovalAlgorithm);
             ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).HorizontalGap = graphLayoutOptions.overlapRemovalHorizontalGap;
             ((OverlapRemovalParameters)logic.DefaultOverlapRemovalAlgorithmParams).VerticalGap = graphLayoutOptions.overlapRemovalVerticalGap;
             logic.DefaultEdgeRoutingAlgorithm = graphLayoutOptions.edgeRoutingAlgorithm;
             logic.AsyncAlgorithmCompute = false;
-            _zoomctrl.Content = _gArea;
+
+            //GraphArea Stuff
+            _gArea = new FSMGraphArea
+            {
+                LogicCore = logic,
+                EdgeLabelFactory = new DefaultEdgelabelFactory()
+            };
+            _gArea.ShowAllEdgesLabels(graphLayoutOptions.showAllEdgesLabels);
+
             _gArea.RelayoutFinished += gArea_RelayoutFinished;
 
+            var gAreaContextMenu = new System.Windows.Controls.ContextMenu();
+            var mipng = new System.Windows.Controls.MenuItem();
+            mipng.Header = "Save graph as .png";
+            mipng.Click += toolStripMenuItemSavePNG_Click;
+            var mijpg = new System.Windows.Controls.MenuItem();
+            mijpg.Header = "Save graph as .jpeg";
+            mijpg.Click += toolStripMenuItemSaveJPG_Click;
+            var mitiff = new System.Windows.Controls.MenuItem();
+            mitiff.Header = "Save graph as .tiff";
+            mitiff.Click += toolStripMenuItemSaveTIFF_Click;
+            var mibmp = new System.Windows.Controls.MenuItem();
+            mibmp.Header = "Save graph as .bmp";
+            mibmp.Click += toolStripMenuItemSaveBMP_Click;
+            var misvg = new System.Windows.Controls.MenuItem();
+            misvg.Header = "Save graph as .svg";
+            misvg.Click += toolStripMenuItemSaveSVG_Click;
+            gAreaContextMenu.Items.Add(mipng);
+            gAreaContextMenu.Items.Add(mijpg);
+            gAreaContextMenu.Items.Add(mitiff);
+            gAreaContextMenu.Items.Add(mibmp);
+            gAreaContextMenu.Items.Add(misvg);
 
+            //_gArea.ContextMenu = gAreaContextMenu;
+
+            //Zoom control stuff
+            _zoomctrl = new ZoomControl();
+            ZoomControl.SetViewFinderVisibility(_zoomctrl, Visibility.Visible);
+            _zoomctrl.Content = _gArea;
+            _zoomctrl.ContextMenu = gAreaContextMenu;
             var myResourceDictionary = new ResourceDictionary { Source = new Uri("Templates\\template.xaml", UriKind.Relative) };
             _zoomctrl.Resources.MergedDictionaries.Add(myResourceDictionary);
 
@@ -285,6 +311,64 @@ namespace VHDL_FSM_Visualizer
                 _gArea.ShowAllEdgesLabels(toolStripButton1.Checked);
                 refreshGraph(true);
             }
+            else
+            {
+                Utils.WriteLogFile(Utils.logType.Error, "Cannot refresh an empty graph, consider opening a .vhd file.");
+            }
+        }
+
+        private void toolStripMenuItemSavePNG_Click(object sender, EventArgs e)
+        {
+            if (_gArea != null)
+            {
+                _gArea.ExportAsImageDialog(ImageType.PNG, true);
+            }
+            else
+            {
+                Utils.WriteLogFile(Utils.logType.Error, "Cannot save an empty graph, consider opening a .vhd file.");
+            }
+        }
+
+        private void toolStripMenuItemSaveTIFF_Click(object sender, EventArgs e)
+        {
+            if (_gArea != null)
+            {
+                _gArea.ExportAsImageDialog(ImageType.TIFF);
+            }
+            else
+            {
+                Utils.WriteLogFile(Utils.logType.Error, "Cannot save an empty graph, consider opening a .vhd file.");
+            }
+        }
+
+        private void toolStripMenuItemSaveBMP_Click(object sender, EventArgs e)
+        {
+            if (_gArea != null)
+            {
+                _gArea.ExportAsImageDialog(ImageType.BMP);
+            }
+            else
+            {
+                Utils.WriteLogFile(Utils.logType.Error, "Cannot save an empty graph, consider opening a .vhd file.");
+            }
+        }
+
+        private void toolStripMenuItemSaveJPG_Click(object sender, EventArgs e)
+        {
+            if (_gArea != null)
+            {
+                _gArea.ExportAsImageDialog(ImageType.JPEG);
+            }
+            else
+            {
+                Utils.WriteLogFile(Utils.logType.Error, "Cannot save an empty graph, consider opening a .vhd file.");
+            }
+        }
+
+        private void toolStripMenuItemSaveSVG_Click(object sender, EventArgs e)
+        {
+            //TODO: Implement SVG Export
+            Utils.WriteLogFile(Utils.logType.Error, "Not implemented yet. If you really want it please contribute :)");
         }
     }
 }
