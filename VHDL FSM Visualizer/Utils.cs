@@ -14,7 +14,7 @@ namespace VHDL_FSM_Visualizer
 
         public static Form1 form { get; set; }
 
-        public enum logType { Info, Error, Debug };
+        public enum logType { Info, Error, Warning, Debug };
         static int fsmDeclarationLine = -1;
         static int lineOfOpenEnum = -1, indexOfOpenEnum = -1, lineOfCloseEnum = -1, indexOfCloseEnum = -1;
         static string fsmDeclerationText = "";
@@ -160,7 +160,7 @@ namespace VHDL_FSM_Visualizer
                             string line = RemoveLeadingMultiTabs(linesOfCode[i]);
                             sb.AppendLine(line);
                         }
-                        state.whenStmentTxt = sb.ToString();
+                        state.whenStmentTxt = sb.ToString().Replace("\t", "  ");
                         Utils.WriteLogFile(Utils.logType.Debug, "State: " + state.name + " ", state.whenStmentTxt.Replace("\t", " "));
                     }
                     else
@@ -185,7 +185,7 @@ namespace VHDL_FSM_Visualizer
                             }
                             else
                             {
-                                Utils.WriteLogFile(Utils.logType.Error, "line #" + (i + 1) + ": " + line + " has an unknown next state");
+                                Utils.WriteLogFile(logType.Error, "line #" + (i + 1) + ": " + line + " has an unknown next state");
                             }
                         }
                         else if (i > startIfLine && (i<startElseLine || startElseLine==-1) && line.IndexOf(fsmNextStateVar) != -1)
@@ -193,7 +193,14 @@ namespace VHDL_FSM_Visualizer
                             FSM_State next_state = GetStateForTransition(line, fsmStates, fsmNextStateVar);
                             if (next_state != null)
                             {
-                                state.next_states.Add(next_state, KeepOnlyConditionText(linesOfCode[startIfLine]));
+                                try
+                                {
+                                    state.next_states.Add(next_state, KeepOnlyConditionText(linesOfCode[startIfLine]));
+                                }
+                                catch (Exception ex)
+                                {
+                                    Utils.WriteLogFile(logType.Error, "line #" + (i + 1) + ": " + line + " could not add state transition" + state.name +"->"+next_state.name);
+                                }
                             }
                             else
                             {
@@ -205,11 +212,18 @@ namespace VHDL_FSM_Visualizer
                             FSM_State next_state = GetStateForTransition(line, fsmStates, fsmNextStateVar);
                             if (next_state != null)
                             {
-                                state.next_states.Add(next_state, "not(" + KeepOnlyConditionText(linesOfCode[startIfLine]) + ")");
+                                try
+                                {
+                                    state.next_states.Add(next_state, "not(" + KeepOnlyConditionText(linesOfCode[startIfLine]) + ")");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Utils.WriteLogFile(logType.Error, "line #" + (i + 1) + ": " + line + " could not add state transition" + state.name + "->" + next_state.name);
+                                }
                             }
                             else
                             {
-                                Utils.WriteLogFile(Utils.logType.Error, "line #" + (i + 1) + ": " + line + " has an unknown next state");
+                                Utils.WriteLogFile(logType.Error, "line #" + (i + 1) + ": " + line + " has an unknown next state");
                             }
                         }
                         if (IsIfStatement(line))
@@ -234,7 +248,7 @@ namespace VHDL_FSM_Visualizer
             }
             else
             {
-                Utils.WriteLogFile(Utils.logType.Debug, "Case statement could not be found for variable", fsmCurrStateVar);
+                WriteLogFile(logType.Debug, "Case statement could not be found for variable", fsmCurrStateVar);
             }
 
             return fsmStates;
