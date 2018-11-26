@@ -1,12 +1,13 @@
 # VHDL FSM Visualizer
 A VHDL helper that visualizes FSM states and transitions by tracking, in real-time, a specified .vhd file. The purpose of this application is to provide a user friendly interface for mapping an FSM at the same time it is coded, in VHDL. It aims to accelerate FSM creation and debugging by visualizing its states and flow. The application can also be used for educational purposes to help understand better the concept of FSMs by visualising their graph as you code them.
 
-##Current Goals
-* Real-time file tracking and auto-update
+## Current Goals
+* Live file tracking and auto-update
 *	Support for mapping conditional state transitions
-* User friendly interface that accelerates development & debugging
+* User friendly interface that accelerates debugging & learning
 
-##Future Goals
+## Future Goals
+* Support for visualising FSM controlled outputs
 *	Support for visualising multiple FSMs in the same .vhd file
 * Support for tracking multiple .vhd files through an MDI (multiple document interface)
 * Embedded VHDL text editor
